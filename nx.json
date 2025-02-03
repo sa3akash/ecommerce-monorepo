@@ -1,20 +1,38 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["{projectRoot}/.next,dist,build"],
-      "cache": true
-    },
     "dev": {
-      "dependsOn": ["^dev"]
+      "dependsOn": [
+        "^dev"
+      ]
     },
-    "lint": {
-      "dependsOn": ["^lint"],
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/.next,build,dist,coverage"
+      ],
       "cache": true
     },
     "tsc": {
-      "dependsOn": ["^tsc"],
+      "dependsOn": [
+        "^tsc"
+      ],
+      "cache": true
+    },
+    "lint": {
+      "dependsOn": [
+        "^lint"
+      ],
+      "cache": true
+    },
+    "prettier:fix": {
+      "dependsOn": [
+        "^prettier:fix"
+      ]
+    },
+    "test": {
       "cache": true
     }
   },

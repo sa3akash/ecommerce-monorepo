@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { config } from '@/config';
 // import { redisConnection } from '@services/cache/redis.connection';
 
-const log = config.createLogger('database connection');
+const log = config.createLogger('MONGODB_CONNECTION_SETUP');
 
 export default () => {
   const connect = () => {

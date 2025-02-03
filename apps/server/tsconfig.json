@@ -8,11 +8,11 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
-      "@services/*": ["src/services/*"],
-      "@admin/*": ["src/modules/admin/*"],
-      "@teacher/*": ["src/modules/teacher/*"],
-      "@student/*": ["src/modules/student/*"],
-      "@middleware/*": ["src/middleware/*"],
+      // "@services/*": ["src/services/*"],
+      // "@admin/*": ["src/modules/admin/*"],
+      // "@teacher/*": ["src/modules/teacher/*"],
+      // "@student/*": ["src/modules/student/*"],
+      // "@middleware/*": ["src/middleware/*"],
       "@/*": ["src/*"]
     }
   },
