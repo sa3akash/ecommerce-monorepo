@@ -1,0 +1,28 @@
+{
+  "name": "ecommerce",
+  "version": "1.0.0",
+  "author": "",
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "private": true,
+  "scripts": {
+    "format": "prettier  \"{apps,libs}/**/*.{ts,tsx,js,json}\" --ignore-path .gitignore",
+    "format:check": "bun run format --check",
+    "format:write": "bun run format --write",
+    "tsc": "bun run nx run-many -t tsc",
+    "lint": "bun run nx run-many -t lint",
+    "build": "bun run nx run-many -t build",
+    "validate": "bun run format:write && bun run tsc && bun run lint && yarn tsc"
+  },
+  "type": "commonjs",
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "devDependencies": {
+    "eslint": "^9.19.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  }
+}
