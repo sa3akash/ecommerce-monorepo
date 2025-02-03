@@ -13,7 +13,7 @@
     "tsc": "bun run nx run-many -t tsc",
     "lint": "bun run nx run-many -t lint",
     "build": "bun run nx run-many -t build",
-    "validate": "bun run format:write && bun run tsc && bun run lint && yarn tsc"
+    "validate": "bun run format:write && bun run tsc && bun run lint && bun run tsc"
   },
   "type": "commonjs",
   "workspaces": [
@@ -23,6 +23,7 @@
   "devDependencies": {
     "eslint": "^9.19.0",
     "prettier": "^3.4.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "nx": "20.4.0"
   }
 }

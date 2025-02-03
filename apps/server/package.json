@@ -1,0 +1,41 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "dist/app.js",
+  "scripts": {
+    "dev": "nodemon -L -r tsconfig-paths/register src/app.ts | bunyan",
+    "start": "node dist/app.js | bunyan",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "tsc": "tsc --noEmit",
+    "build:dist": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "build": "rimraf ./dist && yarn build:dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "",
+  "dependencies": {
+    "@socket.io/redis-adapter": "^8.3.0",
+    "bunyan": "^1.8.15",
+    "compression": "^1.7.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "error-express": "^1.1.4",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "hpp": "^0.2.3",
+    "mongoose": "^8.9.6",
+    "redis": "^4.7.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/bunyan": "^1.8.11",
+    "@types/compression": "^1.7.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/hpp": "^0.2.6",
+    "typescript": "^5.7.3"
+  }
+}

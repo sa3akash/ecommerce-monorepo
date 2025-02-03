@@ -6,12 +6,14 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "tsc": "tsc --noEmit",
     "lint": "next lint"
   },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.1.6"
+    "next": "15.1.6",
+    "@ecommerce/ui": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5",
