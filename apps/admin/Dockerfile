@@ -17,7 +17,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # COPY apps/client/.env .env
 
-RUN bun --filter '/apps/admin' build
+RUN bun run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
