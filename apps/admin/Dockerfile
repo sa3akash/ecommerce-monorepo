@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json bun.lock libs ./
+COPY . ./
 RUN bun install --frozen-lockfile
 
 # Rebuild the source code only when needed
@@ -17,7 +17,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # COPY apps/client/.env .env
 
-RUN bun run build
+RUN bun run build:admin
 
 # Production image, copy all the files and run next
 FROM base AS runner

@@ -11,7 +11,9 @@
     "tsc": "bun run nx run-many -t tsc",
     "lint": "bun run nx run-many -t lint",
     "build": "bun --filter '*' build",
-    "build:apps": "bun --filter './apps/*' build",
+    "build:server": "bun --filter '/apps/server' build",
+    "build:client": "bun --filter './apps/client' build",
+    "build:admin": "bun --filter './apps/admin' build",
     "validate": "bun run format:write && lint && tsc"
   },
   "type": "commonjs",
