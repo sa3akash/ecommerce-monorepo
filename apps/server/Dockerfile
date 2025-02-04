@@ -1,4 +1,4 @@
-FROM oven/bun:1 AS base
+FROM oven/bun:alpine AS base
 LABEL authors="SHAKIL"
 
 WORKDIR /usr/src/app
@@ -7,15 +7,13 @@ WORKDIR /usr/src/app
 FROM base AS install
 
 RUN mkdir -p /temp/dev
-COPY package.json bun.lock /temp/dev/
-COPY apps/server/package.json /temp/dev/apps/server/
-RUN cd /temp/dev && bun install --frozen-lockfile
+COPY . /temp/dev/
+RUN cd /temp/dev && bun install --filter '/apps/server'
 
 # Install production dependencies only
 RUN mkdir -p /temp/prod
-COPY package.json bun.lock /temp/prod/
-COPY apps/server/package.json /temp/prod/apps/server/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+COPY . /temp/prod/
+RUN cd /temp/prod && bun install --filter '/apps/server' --production
 
 # Copy node_modules from temp directory
 FROM base AS prerelease
