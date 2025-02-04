@@ -1,72 +1,127 @@
-name: Build and Push Docker Images
+# name: Build and Push Docker Images
+
+# on:
+#   push:
+#     branches:
+#       - main  # Change this to your default branch
+#     # tags:
+#     #   - v*  # Trigger on version tags like v1.0.0
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Set up QEMU for multi-platform builds
+#         uses: docker/setup-qemu-action@v2
+
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v2
+
+#       - name: Login to Docker Hub
+#         uses: docker/login-action@v2
+#         with:
+#           username: ${{ secrets.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_TOKEN }}
+
+#       - name: Cache Docker layers
+#         uses: actions/cache@v3
+#         with:
+#           path: /tmp/.buildx-cache
+#           key: ${{ runner.os }}-buildx-${{ github.sha }}
+#           restore-keys: |
+#             ${{ runner.os }}-buildx-
+
+#       - name: Build and push bun node app
+#         uses: docker/build-push-action@v3
+#         with:
+#           context: .
+#           file: Dockerfile.server
+#           push: true
+#           tags: |
+#             sa2avroo/ecommerce-server-node:latest
+#             sa2avroo/ecommerce-server-node:${{ github.sha }}
+#             sa2avroo/ecommerce-server-node:${{ github.ref_name }}
+
+#       - name: Build and push bun nextjs app
+#         uses: docker/build-push-action@v3
+#         with:
+#           context: .
+#           file: Dockerfile.client
+#           push: true
+#           tags: |
+#             sa2avroo/ecommerce-client-nextjs:latest
+#             sa2avroo/ecommerce-client-nextjs:${{ github.sha }}
+#             sa2avroo/ecommerce-client-nextjs:${{ github.ref_name }}
+
+#       - name: Build and push bun admin nextjs app
+#         uses: docker/build-push-action@v3
+#         with:
+#           context: .
+#           file: Dockerfile.admin
+#           push: true
+#           tags: |
+#             sa2avroo/ecommerce-admin-nextjs:latest
+#             sa2avroo/ecommerce-admin-nextjs:${{ github.sha }}
+#             sa2avroo/ecommerce-admin-nextjs:${{ github.ref_name }}
+
+#       - name: Logout from Docker Hub
+#         run: docker logout
+
+
+# 
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
-      - main  # Change this to your default branch
-    # tags:
-    #   - v*  # Trigger on version tags like v1.0.0
+      - main 
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [16.x]
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: Set up QEMU for multi-platform builds
-        uses: docker/setup-qemu-action@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    - name: Install Dependencies
+      run: npm install
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+    - name: Build Monorepo
+      run: bun run build
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+    # - name: Run Tests
+    #   run: npx nx run-many --target=test --all
 
-      - name: Build and push bun node app
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: Dockerfile.server
-          push: true
-          tags: |
-            sa2avroo/ecommerce-server-node:latest
-            sa2avroo/ecommerce-server-node:${{ github.sha }}
-            sa2avroo/ecommerce-server-node:${{ github.ref_name }}
+  dockerize:
+    needs: build
+    runs-on: ubuntu-latest
 
-      - name: Build and push bun nextjs app
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: Dockerfile.client
-          push: true
-          tags: |
-            sa2avroo/ecommerce-client-nextjs:latest
-            sa2avroo/ecommerce-client-nextjs:${{ github.sha }}
-            sa2avroo/ecommerce-client-nextjs:${{ github.ref_name }}
+    steps:
+    - uses: actions/checkout@v2
 
-      - name: Build and push bun admin nextjs app
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: Dockerfile.admin
-          push: true
-          tags: |
-            sa2avroo/ecommerce-admin-nextjs:latest
-            sa2avroo/ecommerce-admin-nextjs:${{ github.sha }}
-            sa2avroo/ecommerce-admin-nextjs:${{ github.ref_name }}
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-      - name: Logout from Docker Hub
-        run: docker logout
+    - name: Build and Push Docker Images
+      run: |
+        docker build -t sa2avroo/ecommerce-server-nodejs:latest -f apps/server/Dockerfile .
+        docker push sa2avroo/ecommerce-server-nodejs:latest
+
+        docker build -t sa2avroo/ecommerce-client-nextjs:latest -f apps/client/Dockerfile .
+        docker push sa2avroo/ecommerce-client-nextjs:latest
+
+        docker build -t sa2avroo/ecommerce-admin-nextjs:latest -f apps/admin/Dockerfile .
+        docker push sa2avroo/ecommerce-admin-nextjs:latest
