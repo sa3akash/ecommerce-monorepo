@@ -61,6 +61,6 @@ RUN bun install --frozen-lockfile
 # Copy the rest of the application
 COPY . .
 
-RUN bun run build
+RUN bun --filter './apps/server' build
 # Set the entrypoint to run pkg-a
 CMD ["bun", "run", "apps/server/dist/app.js"]

@@ -118,10 +118,10 @@ jobs:
     - name: Build and Push Docker Images
       run: |
         docker build -t sa2avroo/ecommerce-server-nodejs:latest -f apps/server/Dockerfile .
-        docker push sa2avroo/ecommerce-server-nodejs:latest
+        # docker push sa2avroo/ecommerce-server-nodejs:latest
 
-        docker build -t sa2avroo/ecommerce-client-nextjs:latest -f apps/client/Dockerfile .
-        docker push sa2avroo/ecommerce-client-nextjs:latest
+        # docker build -t sa2avroo/ecommerce-client-nextjs:latest -f apps/client/Dockerfile .
+        # docker push sa2avroo/ecommerce-client-nextjs:latest
 
-        docker build -t sa2avroo/ecommerce-admin-nextjs:latest -f apps/admin/Dockerfile .
-        docker push sa2avroo/ecommerce-admin-nextjs:latest
+        # docker build -t sa2avroo/ecommerce-admin-nextjs:latest -f apps/admin/Dockerfile .
+        # docker push sa2avroo/ecommerce-admin-nextjs:latest
