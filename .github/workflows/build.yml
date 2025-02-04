@@ -38,32 +38,35 @@ jobs:
       - name: Build and push bun node app
         uses: docker/build-push-action@v3
         with:
-          context: ./apps/server
+          context: .
+          dockerfile: ./Dockerfile.server
           push: true
           tags: |
-            sa2avroo/lms-server-node:latest
-            sa2avroo/lms-server-node:${{ github.sha }}
-            sa2avroo/lms-server-node:${{ github.ref_name }}
+            sa2avroo/ecommerce-server-node:latest
+            sa2avroo/ecommerce-server-node:${{ github.sha }}
+            sa2avroo/ecommerce-server-node:${{ github.ref_name }}
 
       - name: Build and push bun nextjs app
         uses: docker/build-push-action@v3
         with:
-          context: ./apps/client
+          context: .
+          dockerfile: ./Dockerfile.client
           push: true
           tags: |
-            sa2avroo/lms-client-nextjs:latest
-            sa2avroo/lms-client-nextjs:${{ github.sha }}
-            sa2avroo/lms-client-nextjs:${{ github.ref_name }}
+            sa2avroo/ecommerce-client-nextjs:latest
+            sa2avroo/ecommerce-client-nextjs:${{ github.sha }}
+            sa2avroo/ecommerce-client-nextjs:${{ github.ref_name }}
 
       - name: Build and push bun admin nextjs app
         uses: docker/build-push-action@v3
         with:
-          context: ./apps/admin
+          context: .
+          dockerfile: ./Dockerfile.admin
           push: true
           tags: |
-            sa2avroo/lms-client-nextjs:latest
-            sa2avroo/lms-client-nextjs:${{ github.sha }}
-            sa2avroo/lms-client-nextjs:${{ github.ref_name }}
+            sa2avroo/ecommerce-admin-nextjs:latest
+            sa2avroo/ecommerce-admin-nextjs:${{ github.sha }}
+            sa2avroo/ecommerce-admin-nextjs:${{ github.ref_name }}
 
       - name: Logout from Docker Hub
         run: docker logout
