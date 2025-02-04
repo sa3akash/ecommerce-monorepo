@@ -22,7 +22,7 @@ COPY . .
 
 # Optional: tests & build
 ENV NODE_ENV=production
-RUN bun --filter './apps/server/' build
+RUN bun run build
 
 # Production image
 FROM base AS release
