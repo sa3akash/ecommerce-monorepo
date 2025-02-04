@@ -49,16 +49,13 @@ LABEL authors="SHAKIL"
 WORKDIR /usr/src/app
 
 # Copy root package.json and bun.lock (monorepo dependencies)
-COPY package.json bun.lock bunfig.toml ./
-
-# Copy apps and libs package.json files (required for Bun monorepo)
-COPY apps/server/package.json apps/server/
+COPY . .
 
 # Install dependencies for the entire monorepo
 RUN bun install --frozen-lockfile
 
 # Copy the entire monorepo
-COPY . .
+
 
 # Set working directory to the server app
 WORKDIR /usr/src/app/apps/server
