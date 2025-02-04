@@ -57,7 +57,7 @@ COPY bun.lock ./
 COPY apps/server/package.json ./apps/server/
 
 # Install dependencies
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Copy the rest of the application
 COPY . .
