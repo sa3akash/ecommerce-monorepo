@@ -38,8 +38,7 @@ jobs:
       - name: Build and push bun node app
         uses: docker/build-push-action@v3
         with:
-          context: .
-          dockerfile: ./Dockerfile.server
+          context: ./Dockerfile.server
           push: true
           tags: |
             sa2avroo/ecommerce-server-node:latest
@@ -49,8 +48,7 @@ jobs:
       - name: Build and push bun nextjs app
         uses: docker/build-push-action@v3
         with:
-          context: .
-          dockerfile: ./Dockerfile.client
+          context: ./Dockerfile.client
           push: true
           tags: |
             sa2avroo/ecommerce-client-nextjs:latest
@@ -60,8 +58,7 @@ jobs:
       - name: Build and push bun admin nextjs app
         uses: docker/build-push-action@v3
         with:
-          context: .
-          dockerfile: ./Dockerfile.admin
+          context: ./Dockerfile.admin
           push: true
           tags: |
             sa2avroo/ecommerce-admin-nextjs:latest
