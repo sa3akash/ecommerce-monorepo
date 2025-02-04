@@ -41,36 +41,37 @@
 
 
 
+
 # Base image
 FROM oven/bun:alpine AS base
 LABEL authors="SHAKIL"
 
 WORKDIR /usr/src/app
 
-# Install dependencies (cache layer)
-FROM base AS install
+# Copy only the necessary files for dependency installation
 COPY package.json bun.lock ./
 COPY apps/server/package.json apps/server/
+
+# Install dependencies (all workspace packages)
 RUN bun install --frozen-lockfile
 
+# Copy full workspace
+COPY . .
+
 # Build the application
-FROM base AS build
-WORKDIR /usr/src/app
-COPY --from=install /usr/src/app/node_modules node_modules
-COPY . . 
 WORKDIR /usr/src/app/apps/server
 RUN bun run build
 
 # Production-ready image
-FROM base AS production
+FROM oven/bun:alpine AS production
 WORKDIR /usr/src/app
 
 # Copy only production dependencies
-COPY --from=install /usr/src/app/node_modules node_modules
+COPY --from=base /usr/src/app/node_modules node_modules
 
 # Copy built app
-COPY --from=build /usr/src/app/apps/server/dist ./dist
-COPY --from=build /usr/src/app/apps/server/package.json . 
+COPY --from=base /usr/src/app/apps/server/dist ./dist
+COPY --from=base /usr/src/app/apps/server/package.json . 
 
 # Set environment
 ENV NODE_ENV=production
