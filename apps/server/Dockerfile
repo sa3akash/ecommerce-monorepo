@@ -4,33 +4,35 @@ LABEL authors="SHAKIL"
 
 WORKDIR /usr/src/app
 
-# Copy package.json and bun.lock for dependency installation
-COPY package.json bun.lock ./
-
 # Install dependencies into a temp directory to cache them
 FROM base AS install
-RUN mkdir -p /usr/src/app/apps/server
+RUN mkdir -p /temp/dev/apps/server /temp/prod/apps/server
 
-# Copy root and application-specific package.json before installing dependencies
-COPY package.json bun.lock /usr/src/app/
-COPY apps/server/package.json /usr/src/app/apps/server/
+
+# Copy the root package.json and bun.lock
+COPY package.json bun.lock /temp/dev/
+COPY apps/server/package.json /temp/dev/apps/server/
+
+# Copy application-specific package.json
+COPY apps/server/package.json /temp/dev/apps/server/
+COPY apps/server/package.json /temp/prod/apps/server/
 
 # Install all dependencies (including dev) for building
-WORKDIR /usr/src/app
-RUN bun install --frozen-lockfile
+RUN cd /temp/dev && bun install --frozen-lockfile
 
-# Install only production dependencies separately
-FROM base AS production-deps
-WORKDIR /usr/src/app
-COPY package.json bun.lock ./
-COPY apps/server/package.json apps/server/
-RUN bun install --frozen-lockfile --production
+# Install only production dependencies
+COPY package.json bun.lock /temp/prod/
+COPY apps/server/package.json /temp/prod/apps/server/
+
+RUN cd /temp/prod && bun install --frozen-lockfile --production
+
+# Copy node_modules from temp directory for building
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
+COPY . . 
 
 # Build the application
-FROM base AS prerelease
-WORKDIR /usr/src/app
-COPY --from=install /usr/src/app/node_modules node_modules
-COPY . . 
+ENV NODE_ENV=production
 WORKDIR /usr/src/app/apps/server
 RUN bun run build
 
@@ -39,11 +41,11 @@ FROM base AS release
 WORKDIR /usr/src/app
 
 # Copy only production dependencies
-COPY --from=production-deps /usr/src/app/node_modules node_modules
+COPY --from=install /temp/prod/node_modules node_modules
 
 # Copy built files
 COPY --from=prerelease /usr/src/app/apps/server/dist ./dist
-COPY --from=prerelease /usr/src/app/package.json ./
+COPY --from=prerelease /usr/src/app/package.json .
 
 # Set environment variables
 ENV NODE_ENV=production
