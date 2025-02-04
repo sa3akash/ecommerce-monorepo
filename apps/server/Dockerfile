@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 FROM base AS install
 
 # Copy root-level package.json and bun.lockb
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 
 # Install all dependencies (including dev dependencies)
 RUN bun install --frozen-lockfile
