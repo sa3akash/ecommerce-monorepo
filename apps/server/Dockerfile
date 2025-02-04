@@ -52,7 +52,8 @@ FROM oven/bun:1
 WORKDIR /app
 
 # Copy package.json files
-COPY package.json bun.lock ./
+COPY package.json ./
+COPY bun.lock ./
 COPY apps/server/package.json ./apps/server/
 
 # Install dependencies
