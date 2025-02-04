@@ -22,13 +22,13 @@ COPY . .
 
 # Optional: tests & build
 ENV NODE_ENV=production
-RUN bun run build
+RUN bun --filter './apps/server/' build
 
 # Production image
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/dist ./dist
-COPY --from=prerelease /usr/src/app/package.json .
+COPY --from=prerelease /usr/src/app/apps/server/dist ./dist
+COPY --from=prerelease /usr/src/app/apps/server/package.json .
 
 # Set environment variables
 ENV NODE_ENV=production
