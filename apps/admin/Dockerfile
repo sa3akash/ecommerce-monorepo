@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY . ./
-RUN bun install --frozen-lockfile
+RUN bun install --filter './apps/admin'
 
 # Rebuild the source code only when needed
 FROM base AS builder
