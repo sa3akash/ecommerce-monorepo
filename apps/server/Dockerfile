@@ -1,48 +1,54 @@
-# Stage 1: Base image
+# Use Bun Alpine as the base image
 FROM oven/bun:alpine AS base
 LABEL authors="SHAKIL"
 
-# Set working directory
 WORKDIR /usr/src/app
 
-# Stage 2: Install dependencies
+# Install dependencies into a temp directory to cache them
 FROM base AS install
+RUN mkdir -p /temp/dev /temp/prod
 
-# Copy root-level package.json and bun.lockb
-COPY package.json bun.lock ./
+# Copy the root package.json and bun.lock
+COPY package.json bun.lock /temp/dev/
+COPY package.json bun.lock /temp/prod/
 
-# Install all dependencies (including dev dependencies)
-RUN bun install --frozen-lockfile
+# Copy application-specific package.json
+COPY apps/server/package.json /temp/dev/apps/server/
+COPY apps/server/package.json /temp/prod/apps/server/
 
-# Stage 3: Copy source code and build the app
+# Install all dependencies (including dev) for building
+RUN cd /temp/dev && bun install --frozen-lockfile
+
+# Install only production dependencies
+RUN cd /temp/prod && bun install --frozen-lockfile --production
+
+# Copy node_modules from temp directory for building
 FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
+COPY . . 
 
-# Copy node_modules from the install stage
-COPY --from=install /usr/src/app/node_modules ./node_modules
+# Build the application
+ENV NODE_ENV=production
+WORKDIR /usr/src/app/apps/server
+RUN bun run build
 
-# Copy the entire monorepo
-COPY . .
-
-# Build the specific app using Nx (replace `app1` with your app name)
-RUN bun --filter './apps/server/' build
-
-# Stage 4: Production image
+# Final production image
 FROM base AS release
+WORKDIR /usr/src/app
 
-# Copy production node_modules from the install stage
-COPY --from=install /usr/src/app/node_modules ./node_modules
+# Copy only production dependencies
+COPY --from=install /temp/prod/node_modules node_modules
 
-# Copy the built app from the prerelease stage
-COPY --from=prerelease /usr/src/app/dist/apps/app1 ./dist
-
-# Copy package.json for production
-COPY package.json .
+# Copy built files
+COPY --from=prerelease /usr/src/app/apps/server/dist ./dist
+COPY --from=prerelease /usr/src/app/package.json .
 
 # Set environment variables
 ENV NODE_ENV=production
+EXPOSE 5500/tcp
 
-# Expose the port your app runs on
-EXPOSE 5500
+# Change user to bun which has necessary permissions
+USER bun
 
-# Run the app
+# Run the application
 CMD ["bun", "run", "start"]
