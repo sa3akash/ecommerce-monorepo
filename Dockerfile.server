@@ -8,7 +8,8 @@ FROM base AS install
 RUN mkdir -p /temp/dev/apps/server/
 COPY package.json bun.lock /temp/dev/
 COPY apps/server/package.json /temp/dev/apps/server/
-RUN cd /temp/dev && bun install --frozen-lockfile
+RUN (cd /temp/dev && bun install --frozen-lockfile --verbose)  
+
 
 # Install production dependencies only
 RUN mkdir -p /temp/prod/apps/server/
