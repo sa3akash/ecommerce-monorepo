@@ -42,38 +42,42 @@
 
 
 
-# Base image
+# Use Bun base image
 FROM oven/bun:alpine AS base
 LABEL authors="SHAKIL"
 
 WORKDIR /usr/src/app
 
-# Copy only the necessary files for dependency installation
-COPY package.json bun.lock ./
+# Copy root package.json and bun.lock (monorepo dependencies)
+COPY package.json bun.lock bunfig.toml ./
+
+# Copy apps and libs package.json files (required for Bun monorepo)
 COPY apps/server/package.json apps/server/
 
-# Install dependencies (all workspace packages)
+# Install dependencies for the entire monorepo
 RUN bun install --frozen-lockfile
 
-# Copy full workspace
+# Copy the entire monorepo
 COPY . .
 
-# Build the application
+# Set working directory to the server app
 WORKDIR /usr/src/app/apps/server
+
+# Build the server application
 RUN bun run build
 
-# Production-ready image
+# Production image
 FROM oven/bun:alpine AS production
 WORKDIR /usr/src/app
 
-# Copy only production dependencies
+# Copy production dependencies only
 COPY --from=base /usr/src/app/node_modules node_modules
 
 # Copy built app
 COPY --from=base /usr/src/app/apps/server/dist ./dist
 COPY --from=base /usr/src/app/apps/server/package.json . 
 
-# Set environment
+# Set environment variables
 ENV NODE_ENV=production
 EXPOSE 5500
 
