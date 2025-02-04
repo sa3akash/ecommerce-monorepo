@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json bun.lock libs ./
-RUN bun install --frozen-lockfile
+RUN bun --filter '/apps/admin' install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -17,7 +17,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # COPY apps/client/.env .env
 
-RUN bun run build
+RUN bun --filter '/apps/admin' build
 
 # Production image, copy all the files and run next
 FROM base AS runner

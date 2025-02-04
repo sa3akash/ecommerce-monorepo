@@ -13,7 +13,7 @@ RUN cd /temp/dev && bun install --frozen-lockfile
 # Install production dependencies only
 RUN mkdir -p /temp/prod
 COPY . /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+RUN cd /temp/prod && bun --filter '/apps/server' install --frozen-lockfile --production
 
 # Copy node_modules from temp directory
 FROM base AS prerelease
@@ -22,7 +22,7 @@ COPY . .
 
 # Optional: tests & build
 ENV NODE_ENV=production
-RUN bun run build
+RUN bun --filter '/apps/server' build
 
 # Production image
 FROM base AS release
