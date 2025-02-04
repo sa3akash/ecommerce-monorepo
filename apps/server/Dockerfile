@@ -48,14 +48,17 @@ LABEL authors="SHAKIL"
 
 WORKDIR /usr/src/app
 
-# Copy root package.json and bun.lock (monorepo dependencies)
-COPY . .
+# Copy root-level package files first (better caching)
+COPY package.json bun.lock bunfig.toml ./
 
-# Install dependencies for the entire monorepo
+# Copy server app's package.json (to resolve workspace dependencies correctly)
+COPY apps/server/package.json apps/server/
+
+# Install dependencies for the entire monorepo (cached separately)
 RUN bun install --frozen-lockfile
 
-# Copy the entire monorepo
-
+# Copy the entire monorepo AFTER dependencies are installed (reduces cache busting)
+COPY . .
 
 # Set working directory to the server app
 WORKDIR /usr/src/app/apps/server
@@ -67,12 +70,12 @@ RUN bun run build
 FROM oven/bun:alpine AS production
 WORKDIR /usr/src/app
 
-# Copy production dependencies only
+# Copy production dependencies only (prune unnecessary packages)
 COPY --from=base /usr/src/app/node_modules node_modules
 
-# Copy built app
+# Copy only built app and necessary files
 COPY --from=base /usr/src/app/apps/server/dist ./dist
-COPY --from=base /usr/src/app/apps/server/package.json . 
+COPY --from=base /usr/src/app/apps/server/package.json .
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -80,3 +83,4 @@ EXPOSE 5500
 
 USER bun
 CMD ["bun", "run", "start"]
+
