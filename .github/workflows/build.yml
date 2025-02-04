@@ -81,26 +81,26 @@ on:
       - main 
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-  #   strategy:
-  #     matrix:
-  #       node-version: [16.x]
+    strategy:
+      matrix:
+        node-version: [16.x]
 
-  #   steps:
-  #   - uses: actions/checkout@v2
+    steps:
+    - uses: actions/checkout@v2
 
-  #   - name: Use Bun
-  #     uses: oven-sh/setup-bun@v2
-  #     with:
-  #         bun-version: 1.2.0
+    - name: Use Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+          bun-version: 1.2.0
 
-  #   - name: Install Dependencies
-  #     run: bun install
+    # - name: Install Dependencies
+    #   run: bun install
 
-  #   - name: Build Monorepo
-  #     run: bun run build
+    # - name: Build Monorepo
+    #   run: bun run build
 
     # - name: Run Tests
     #   run: npx nx run-many --target=test --all
