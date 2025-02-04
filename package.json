@@ -10,7 +10,8 @@
     "format": "prettier  \"{apps,libs}/**/*.{ts,tsx,js,json}\" --ignore-path .gitignore --write",
     "tsc": "bun run nx run-many -t tsc",
     "lint": "bun run nx run-many -t lint",
-    "build": "bun run nx run-many -t build",
+    "build": "bun --filter '*' build",
+    "build:apps": "bun --filter './apps/*' build",
     "validate": "bun run format:write && lint && tsc"
   },
   "type": "commonjs",
@@ -22,7 +23,6 @@
     "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
-    "nx": "20.4.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3"
   }

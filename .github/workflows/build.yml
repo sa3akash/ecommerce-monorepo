@@ -2,10 +2,10 @@ name: Build and Push Docker Images
 
 on:
   push:
-    # branches:
-    #   - main  # Change this to your default branch
-    tags:
-      - v*  # Trigger on version tags like v1.0.0
+    branches:
+      - main  # Change this to your default branch
+    # tags:
+    #   - v*  # Trigger on version tags like v1.0.0
 
 jobs:
   build:
@@ -38,7 +38,8 @@ jobs:
       - name: Build and push bun node app
         uses: docker/build-push-action@v3
         with:
-          context: Dockerfile.server
+          context: .
+          file: Dockerfile.server
           push: true
           tags: |
             sa2avroo/ecommerce-server-node:latest
@@ -48,7 +49,8 @@ jobs:
       - name: Build and push bun nextjs app
         uses: docker/build-push-action@v3
         with:
-          context: Dockerfile.client
+          context: .
+          file: Dockerfile.client
           push: true
           tags: |
             sa2avroo/ecommerce-client-nextjs:latest
@@ -58,7 +60,8 @@ jobs:
       - name: Build and push bun admin nextjs app
         uses: docker/build-push-action@v3
         with:
-          context: Dockerfile.admin
+          context: .
+          file: Dockerfile.admin
           push: true
           tags: |
             sa2avroo/ecommerce-admin-nextjs:latest
